@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f6f7fb">
+<title>呆萌居家 AI 管家｜智慧居家控制台</title>
+<style>
+:root{
+  --bg:#f5f7fb;--surface:#fff;--surface2:#f8fafc;--ink:#202b3c;--muted:#6c7788;
+  --line:#e5eaf1;--primary:#5b6ee1;--primary-dark:#4355c7;--mint:#dff7ef;--mint-ink:#16775c;
+  --peach:#fff0e5;--peach-ink:#a85424;--lilac:#eeeaff;--lilac-ink:#6653bc;
+  --yellow:#fff6d9;--yellow-ink:#8a6611;--red:#ffe8e8;--red-ink:#b84242;
+  --shadow:0 12px 35px rgba(39,52,85,.07);--radius:22px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 8% 0%,#e9edff 0,transparent 28%),radial-gradient(circle at 100% 15%,#e3fbf2 0,transparent 24%),var(--bg);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif;color:var(--ink);line-height:1.55}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #b9c2ff;outline-offset:2px}
+.app{max-width:1280px;margin:auto;padding:26px 24px 44px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{width:54px;height:54px;border-radius:18px;background:linear-gradient(145deg,#6d7ff0,#9eabff);display:grid;place-items:center;color:white;font-size:27px;box-shadow:0 8px 20px #7482dc45}
+.brand h1{font-size:clamp(20px,3vw,27px);margin:0;letter-spacing:-.5px}
+.brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.top-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.pill{border:1px solid var(--line);border-radius:999px;padding:8px 13px;background:#ffffffc9;color:var(--muted);font-size:12px}
+.pill.online{color:var(--mint-ink);background:var(--mint);border-color:#c8efdf}
+.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:20px;margin-bottom:20px}
+.hero-copy{background:linear-gradient(125deg,#596ce0,#8493f7);color:white;border-radius:28px;padding:30px 32px;position:relative;overflow:hidden;min-height:220px}
+.hero-copy:after{content:"";position:absolute;width:270px;height:270px;border-radius:50%;background:#ffffff12;right:-45px;top:-95px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:1.7px;text-transform:uppercase;opacity:.8}
+.hero h2{font-size:clamp(27px,4vw,40px);line-height:1.2;margin:12px 0 12px;max-width:600px}
+.hero-copy p{margin:0;max-width:560px;color:#eef0ff}
+.hero-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;position:relative;z-index:1}
+.btn{border:0;border-radius:12px;padding:10px 15px;font-weight:750;transition:transform .15s,box-shadow .15s;background:var(--primary);color:#fff}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 15px #27345a20}
+.btn.light{background:#fff;color:#4c5bd0}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn.soft{background:#eef0ff;color:var(--primary-dark)}
+.btn.danger{background:#fff0f0;color:#b84242}
+.btn.small{padding:7px 10px;font-size:12px;border-radius:10px}
+.robot-card{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:var(--shadow);min-height:220px;text-align:center}
+.robot{width:108px;height:108px;border-radius:35px;background:linear-gradient(145deg,#f7f8ff,#dce2ff);border:4px solid #fff;box-shadow:0 10px 25px #6977ce25,inset 0 -8px 15px #b6c2ff60;position:relative;display:grid;place-items:center;margin-bottom:12px}
+.robot:before{content:"";position:absolute;width:76px;height:43px;border-radius:20px;background:#303d68;top:25px}
+.eyes{position:absolute;z-index:1;top:38px;display:flex;gap:21px}
+.eyes span{width:8px;height:11px;border-radius:50%;background:#a9f7e1;box-shadow:0 0 9px #a9f7e1}
+.mouth{position:absolute;z-index:1;top:56px;width:18px;height:8px;border-bottom:3px solid #a9f7e1;border-radius:50%}
+.antenna{position:absolute;width:4px;height:18px;background:#98a4f9;top:-18px;border-radius:4px}
+.antenna:after{content:"";position:absolute;top:-6px;left:-4px;width:12px;height:12px;border-radius:50%;background:#ffc777;border:2px solid white}
+.robot-status{font-size:12px;color:var(--mint-ink);background:var(--mint);padding:5px 10px;border-radius:999px}
+.robot-card strong{font-size:17px;margin-bottom:4px}
+.robot-card p{font-size:13px;color:var(--muted);margin:5px 0 0}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:28px 0 13px}
+.section-head h2{font-size:19px;margin:0}
+.section-head p{font-size:12px;color:var(--muted);margin:3px 0 0}
+.grid{display:grid;gap:16px}
+.metrics{grid-template-columns:repeat(4,minmax(0,1fr))}
+.metric,.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:19px;box-shadow:var(--shadow)}
+.metric-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+.iconbox{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;font-size:19px;background:var(--lilac)}
+.metric-value{font-size:30px;font-weight:800;letter-spacing:-1px;margin:13px 0 2px}
+.metric-foot{font-size:12px;color:var(--muted)}
+.metric-foot.good{color:var(--mint-ink)}
+.main-grid{grid-template-columns:1.15fr .85fr}
+.card-title{display:flex;justify-content:space-between;align-items:start;gap:12px;margin-bottom:15px}
+.card-title h3{font-size:16px;margin:0}
+.card-title p{font-size:12px;color:var(--muted);margin:4px 0 0}
+.tag{font-size:11px;padding:5px 8px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);white-space:nowrap;color:var(--muted)}
+.tag.green{background:var(--mint);color:var(--mint-ink);border-color:#c8efdf}
+.tag.orange{background:var(--yellow);color:var(--yellow-ink);border-color:#f7e8b5}
+.temp-panel{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center}
+.temp-reading{background:linear-gradient(135deg,#f1f3ff,#f9faff);border-radius:18px;padding:20px;text-align:center}
+.temp-number{font-size:47px;font-weight:850;letter-spacing:-2px}
+.temp-number span{font-size:22px;font-weight:600;color:var(--muted)}
+.temp-reading p{margin:0;color:var(--muted);font-size:12px}
+.control-label{display:flex;justify-content:space-between;font-size:13px;margin:12px 0 6px}
+input[type=range]{width:100%;accent-color:var(--primary)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:15px}
+.switch{position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background:#cbd2df;transition:.2s;border-radius:99px}
+.slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s;box-shadow:0 1px 4px #0002}
+.switch input:checked+.slider{background:var(--primary)}
+.switch input:checked+.slider:before{transform:translateX(20px)}
+.device-list{display:grid;gap:10px}
+.device{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:15px;background:#fff}
+.device-icon{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:21px;background:var(--surface2);flex-shrink:0}
+.device-info{flex:1;min-width:0}
+.device-info strong{display:block;font-size:13px}
+.device-info small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.device-right{display:flex;align-items:center;gap:10px}
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#24b887;margin-right:5px}
+.status-dot.off{background:#aab2c0}
+.map-wrap{background:#f8f9ff;border:1px solid var(--line);border-radius:18px;padding:13px}
+.map{height:220px;border-radius:13px;position:relative;overflow:hidden;background-color:#fbfcff;background-image:linear-gradient(#e7eaf3 1px,transparent 1px),linear-gradient(90deg,#e7eaf3 1px,transparent 1px);background-size:24px 24px}
+.room{position:absolute;border:3px solid #aeb7d2;background:#eef0ffdd;border-radius:8px;display:grid;place-items:center;color:#727e9c;font-size:11px;font-weight:700}
+.room.living{left:7%;top:10%;width:43%;height:67%}
+.room.kitchen{right:7%;top:10%;width:34%;height:29%;background:#e9f8f2dd}
+.room.bedroom{right:7%;bottom:10%;width:34%;height:43%;background:#fff2e8dd}
+.obstacle{position:absolute;width:28px;height:28px;border-radius:8px;background:#ffe4a9;border:2px solid #e7b65e;display:grid;place-items:center;font-size:12px}
+.path{position:absolute;left:20%;top:60%;width:47%;height:3px;background:var(--primary);transform:rotate(-26deg);box-shadow:0 0 0 4px #6d7ff022}
+.robot-pin{position:absolute;left:35%;top:48%;width:30px;height:30px;border-radius:11px;background:var(--primary);color:#fff;display:grid;place-items:center;box-shadow:0 3px 10px #5666d555}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:10px}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:9px;height:9px;border-radius:3px;display:inline-block}
+.energy-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.energy-total{font-size:28px;font-weight:850}
+.energy-total small{font-size:12px;font-weight:500;color:var(--muted)}
+.bar-chart{height:120px;display:flex;align-items:end;gap:10px;padding:10px 3px 0;border-bottom:1px solid var(--line)}
+.bar-col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:end;gap:7px;font-size:10px;color:var(--muted)}
+.bar{width:min(28px,80%);border-radius:7px 7px 2px 2px;background:linear-gradient(180deg,#9ca8ff,#6678e9);min-height:5px;transition:height .3s}
+.energy-legend{font-size:11px;color:var(--muted);margin-top:10px}
+.chat-card{display:flex;flex-direction:column;min-height:350px}
+.chat-log{display:flex;flex-direction:column;gap:10px;flex:1;max-height:290px;overflow:auto;padding:2px 3px 12px}
+.bubble{max-width:88%;padding:10px 13px;border-radius:15px;font-size:13px;overflow-wrap:anywhere}
+.bubble.bot{background:#f0f2ff;align-self:flex-start;border-bottom-left-radius:4px}
+.bubble.user{background:var(--primary);color:white;align-self:flex-end;border-bottom-right-radius:4px}
+.bubble small{display:block;font-size:10px;opacity:.65;margin-top:4px}
+.quick-prompts{display:flex;gap:7px;flex-wrap:wrap;margin:9px 0}
+.quick{background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 10px;font-size:11px;color:#5866c9}
+.chat-form{display:flex;gap:8px;border-top:1px solid var(--line);padding-top:13px}
+.chat-form input{min-width:0;flex:1;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface2)}
+.alert-list{display:grid;gap:10px}
+.alert{display:flex;gap:10px;align-items:start;padding:12px;border-radius:14px;background:var(--yellow);color:var(--yellow-ink);font-size:12px}
+.alert.red{background:var(--red);color:var(--red-ink)}
+.alert-icon{font-size:17px}
+.alert strong{display:block;font-size:12px;margin-bottom:2px}
+.alert p{margin:0;opacity:.85}
+.log-list{display:grid;gap:0}
+.log-item{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);font-size:12px}
+.log-item:last-child{border-bottom:0}
+.log-time{width:48px;color:var(--muted);flex-shrink:0}
+.log-bullet{width:9px;height:9px;border-radius:50%;background:#8c99f4;margin-top:5px;flex-shrink:0}
+.log-text{flex:1}
+.log-text small{display:block;color:var(--muted);margin-top:2px}
+.footer{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:22px;padding:0 4px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#202b3c;color:white;padding:12px 17px;border-radius:13px;box-shadow:var(--shadow);font-size:13px;transition:.25s;z-index:10;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.modal-backdrop{position:fixed;inset:0;background:#202b3c70;display:none;place-items:center;padding:20px;z-index:20}
+.modal-backdrop.show{display:grid}
+.modal{width:min(520px,100%);background:white;border-radius:22px;padding:24px;box-shadow:0 25px 80px #101a3540}
+.modal h3{margin:0 0 7px}
+.modal p{color:var(--muted);font-size:13px}
+.modal-actions{display:flex;justify-content:end;gap:8px;margin-top:20px}
+@media(max-width:950px){.hero{grid-template-columns:1fr}.robot-card{min-height:190px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.main-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.app{padding:17px 13px 30px}.topbar{align-items:flex-start}.brand{gap:9px}.logo{width:45px;height:45px;border-radius:15px}.top-actions{justify-content:end}.top-actions .pill{display:none}.hero-copy{padding:24px 21px}.hero h2{font-size:29px}.metrics{gap:10px}.metric{padding:14px}.metric-value{font-size:25px}.temp-panel{grid-template-columns:1fr}.temp-reading{padding:15px}.section-head{align-items:start;flex-direction:column}.card{padding:15px}.device-right{gap:6px}.device{padding:10px}.device-icon{width:38px;height:38px}.footer{display:block}.footer span{display:block;margin-top:5px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">🤖</div>
+      <div><h1>呆萌居家 AI 管家</h1><p>讓日常家務，聰明一點、可愛一點。</p></div>
+    </div>
+    <div class="top-actions">
+      <span class="pill">概念展示版 · 模擬資料</span>
+      <span class="pill online" id="systemPill">● 系統運作中</span>
+      <button class="btn ghost small" id="resetBtn">重設示範</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">SMART HOME · HAPPY LIFE</div>
+      <h2>你好呀！今天的家，<br>交給我來照顧吧。</h2>
+      <p>我可以幫你留意室內溫度、安排地板清潔、查看家電狀態，還會用一點點呆萌，讓智慧生活更有趣。</p>
+      <div class="hero-buttons">
+        <button class="btn light" id="startCleanBtn">▶ 開始清潔示範</button>
+        <button class="btn" id="checkHomeBtn" style="background:#4355c7;border:1px solid #ffffff55">⌂ 檢查居家狀態</button>
+      </div>
+    </div>
+    <div class="robot-card">
+      <div class="robot" aria-label="呆萌機器人圖示"><div class="antenna"></div><div class="eyes"><span></span><span></span></div><div class="mouth"></div></div>
+      <span class="robot-status" id="robotStatus">● 已準備好</span>
+      <strong id="robotMood">管家小萌在線！</strong>
+      <p id="robotMessage">今天要先整理家裡，還是先涼快一下？</p>
+    </div>
+  </section>
+
+  <div class="section-head"><div><h2>今日居家概況</h2><p>以下皆為互動展示用的模擬資料，可操作並觀察畫面變化。</p></div><span class="tag">更新於 <span id="updatedAt">現在</span></span></div>
+  <section class="grid metrics">
+    <div class="metric"><div class="metric-top"><span>室內溫度</span><span class="iconbox">🌡️</span></div><div class="metric-value"><span id="metricTemp">30</span><span style="font-size:17px">°C</span></div><div class="metric-foot" id="tempFoot">目前稍微偏熱</div></div>
+    <div class="metric"><div class="metric-top"><span>家電運作中</span><span class="iconbox" style="background:var(--mint)">🔌</span></div><div class="metric-value"><span id="metricDevices">2</span><span style="font-size:16px;color:var(--muted)"> 台</span></div><div class="metric-foot">依模擬設備狀態統計</div></div>
+    <div class="metric"><div class="metric-top"><span>今日用電</span><span class="iconbox" style="background:var(--peach)">⚡</span></div><div class="metric-value"><span id="metricEnergy">4.8</span><span style="font-size:16px;color:var(--muted)"> kWh</span></div><div class="metric-foot">示範數值，非實際電表讀值</div></div>
+    <div class="metric"><div class="metric-top"><span>居家提醒</span><span class="iconbox" style="background:var(--yellow)">🔔</span></div><div class="metric-value"><span id="metricAlerts">2</span><span style="font-size:16px;color:var(--muted)"> 項</span></div><div class="metric-foot" id="alertFoot">有 1 項需要留意</div></div>
+  </section>
+
+  <div class="section-head"><div><h2>智慧控制中心</h2><p>調整控制項目，立即查看互動結果。</p></div></div>
+  <section class="grid main-grid">
+    <article class="card">
+      <div class="card-title"><div><h3>🌬️ AI 智慧溫度控制</h3><p>依照室溫與舒適設定提供建議</p></div><span class="tag green" id="acTag">冷氣可控制</span></div>
+      <div class="temp-panel">
+        <div class="temp-reading"><div style="font-size:12px;color:var(--muted)">目前室內溫度</div><div class="temp-number"><span id="tempBig">30</span><span>°C</span></div><p id="tempDescription">嗯……有點像夏天的烤箱！</p></div>
+        <div>
+          <div class="control-label"><label for="tempRange">模擬室內溫度</label><strong><span id="rangeTemp">30</span>°C</strong></div>
+          <input id="tempRange" type="range" min="16" max="38" value="30" aria-label="調整模擬室內溫度">
+          <div class="control-label"><label for="targetRange">目標舒適溫度</label><strong><span id="targetTemp">26</span>°C</strong></div>
+          <input id="targetRange" type="range" min="20" max="30" value="26" aria-label="調整目標舒適溫度">
+          <div class="toggle-row"><div><strong style="font-size:13px">冷氣電源</strong><div style="font-size:11px;color:var(--muted)" id="acStateText">目前已關閉</div></div><label class="switch"><input type="checkbox" id="acToggle" aria-label="切換冷氣電源"><span class="slider"></span></label></div>
+          <button class="btn small" id="autoTempBtn" style="width:100%;margin-top:13px">✨ AI 建議並調整</button>
+        </div>
+      </div>
+      <div class="alert" style="margin-top:15px"><span class="alert-icon">💡</span><div><strong>小提醒</strong><p id="tempAdvice">室溫高於目標值，建議開啟冷氣或改善通風。此頁不會真的控制家電。</p></div></div>
+    </article>
+
+    <article class="card">
+      <div class="card-title"><div><h3>🔌 智慧家電狀態</h3><p>點擊開關，模擬設備狀態改變</p></div><span class="tag" id="deviceCountTag">2 台運作中</span></div>
+      <div class="device-list">
+        <div class="device"><div class="device-icon">❄️</div><div class="device-info"><strong>客廳冷氣</strong><small id="acDeviceDetail">目標設定 26°C</small></div><div class="device-right"><label class="switch"><input type="checkbox" id="acDeviceToggle" aria-label="切換客廳冷氣"><span class="slider"></span></label></div></div>
+        <div class="device"><div class="device-icon">🧹</div><div class="device-info"><strong>掃地機器人</strong><small id="vacuumDetail">待命中 · 電量 86%</small></div><div class="device-right"><button class="btn soft small" id="vacuumToggle">啟動</button></div></div>
+        <div class="device"><div class="device-icon">💡</div><div class="device-info"><strong>客廳智慧燈</strong><small id="lightDetail">已開啟 · 模擬設備</small></div><div class="device-right"><label class="switch"><input type="checkbox" id="lightToggle" checked aria-label="切換客廳智慧燈"><span class="slider"></span></label></div></div>
+        <div class="device"><div class="device-icon">📶</div><div class="device-info"><strong>家庭 Wi-Fi</strong><small>連線狀態：正常（模擬）</small></div><div class="device-right"><span class="tag green">連線中</span></div></div>
+      </div>
+      <div class="alert" style="margin-top:13px"><span class="alert-icon">🛡️</span><div><strong>安全設計</strong><p>真實產品需確認設備相容性與操作權限；本展示頁只更新畫面，不會連接或控制實體設備。</p></div></div>
+    </article>
+  </section>
+
+  <div class="section-head"><div><h2>環境感知與清潔規劃</h2><p>示意地圖與狀態，用來展示 AI 如何呈現環境資訊。</p></div></div>
+  <section class="grid main-grid">
+    <article class="card">
+      <div class="card-title"><div><h3>🗺️ 居家場景示意圖</h3><p>非實際測繪圖，色彩只代表示範中的注意區域</p></div><span class="tag orange" id="mapTag">1 處需留意</span></div>
+      <div class="map-wrap">
+        <div class="map" aria-label="模擬室內平面圖">
+          <div class="room living">客廳</div><div class="room kitchen">廚房</div><div class="room bedroom">臥室</div>
+          <div class="path" id="cleanPath"></div>
+          <div class="obstacle" style="left:29%;top:25%" title="家具">🪑</div>
+          <div class="obstacle" style="left:56%;top:53%;background:#ffdede;border-color:#e6a2a2" title="電線注意區">〰️</div>
+          <div class="robot-pin" id="robotPin" title="掃地機器人">🤖</div>
+        </div>
+        <div class="legend"><span><i style="background:#ccefe1"></i>較無障礙區域</span><span><i style="background:#ffe4a9"></i>注意障礙物</span><span><i style="background:#ffdede"></i>需優先留意</span><span><i style="background:#7585ed"></i>模擬清潔路線</span></div>
+      </div>
+      <div class="toggle-row"><div><strong style="font-size:13px">顯示清潔路線</strong><div style="font-size:11px;color:var(--muted)">開啟或隱藏路線示意</div></div><label class="switch"><input type="checkbox" id="pathToggle" checked aria-label="顯示清潔路線"><span class="slider"></span></label></div>
+      <div class="alert red" style="margin-top:13px"><span class="alert-icon">⚠️</span><div><strong>電線注意區</strong><p>建議先整理電線再清掃。AI 視覺辨識可能出錯，請以實際環境確認。</p></div></div>
+    </article>
+    <article class="card">
+      <div class="card-title"><div><h3>🧹 清潔任務</h3><p>啟動後會模擬清潔進度與機器人位置</p></div><span class="tag" id="cleanTag">尚未開始</span></div>
+      <div style="background:var(--surface2);border:1px solid var(--line);border-radius:17px;padding:17px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><div style="font-size:12px;color:var(--muted)">本次清潔進度</div><div style="font-size:28px;font-weight:850" id="cleanPercent">0%</div></div><div style="font-size:39px" id="cleanEmoji">🧹</div></div>
+        <div style="height:9px;background:#e6e9f2;border-radius:999px;overflow:hidden;margin:10px 0 14px"><div id="cleanProgress" style="height:100%;width:0%;background:linear-gradient(90deg,#7e8cf0,#5b6ee1);border-radius:999px;transition:width .4s"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted)"><span>預估時間</span><strong id="cleanTime" style="color:var(--ink)">約 12 分鐘</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px"><span>電量</span><strong id="batteryText" style="color:var(--ink)">86%</strong></div>
+        <div style="height:6px;background:#e6e9f2;border-radius:99px;margin-top:7px;overflow:hidden"><div id="batteryBar" style="height:100%;width:86%;background:#44bd97"></div></div>
+        <div style="display:flex;gap:8px;margin-top:17px"><button class="btn" id="cleanAction" style="flex:1">▶ 開始清潔</button><button class="btn ghost" id="pauseCleanBtn">Ⅱ 暫停</button></div>
+      </div>
+      <div class="alert" style="margin-top:13px"><span class="alert-icon">🐾</span><div><strong>呆萌提醒</strong><p id="cleanNote">開始前先看看地上有沒有小玩具或電線吧！我不想跟它們玩摔角。</p></div></div>
+    </article>
+  </section>
+
+  <div class="section-head"><div><h2>用電分析與 AI 對話</h2><p>用電資料為模擬值；對話區可輸入文字或使用快捷指令。</p></div></div>
+  <section class="grid main-grid">
+    <article class="card">
+      <div class="card-title"><div><h3>⚡ 今日用電概況</h3><p>示範用電趨勢，不代表真實電表讀值</p></div><span class="tag">模擬資料</span></div>
+      <div class="energy-head"><div><div style="font-size:12px;color:var(--muted)">今日累積用電</div><div class="energy-total"><span id="energyTotal">4.8</span> <small>kWh</small></div></div><div style="text-align:right"><div style="font-size:12px;color:var(--muted)">與平常相比</div><strong id="energyCompare" style="color:var(--mint-ink);font-size:13px">接近平均</strong></div></div>
+      <div class="bar-chart" id="energyChart" aria-label="模擬每時段用電長條圖">
+        <div class="bar-col"><div class="bar" style="height:35%"></div><span>06:00</span></div><div class="bar-col"><div class="bar" style="height:50%"></div><span>09:00</span></div><div class="bar-col"><div class="bar" style="height:42%"></div><span>12:00</span></div><div class="bar-col"><div class="bar" style="height:70%"></div><span>15:00</span></div><div class="bar-col"><div class="bar" style="height:88%"></div><span>18:00</span></div><div class="bar-col"><div class="bar" style="height:60%"></div><span>21:00</span></div>
+      </div>
+      <div class="energy-legend">▰ 每個時段的示意用電強度（非實測）</div>
+      <div class="alert" style="margin-top:14px"><span class="alert-icon">📊</span><div><strong>AI 用電觀察</strong><p id="energyAdvice">目前示範資料接近平常範圍。若要分析真實用電，需連接智慧電表或可靠的能源資料來源。</p></div></div>
+      <button class="btn soft small" id="simulateEnergyBtn" style="margin-top:12px">重新模擬用電資料</button>
+    </article>
+
+    <article class="card chat-card">
+      <div class="card-title"><div><h3>💬 跟小管家說說話</h3><p>試試自然語言指令</p></div><span class="tag green">互動展示</span></div>
+      <div class="chat-log" id="chatLog" aria-live="polite">
+        <div class="bubble bot">哈囉！我是呆萌居家 AI 管家 🤖<br>目前是展示模式，我可以幫你模擬控制和查看狀態喔！<small>小管家 · 現在</small></div>
+      </div>
+      <div class="quick-prompts">
+        <button class="quick" data-prompt="家裡好熱">🥵 家裡好熱</button>
+        <button class="quick" data-prompt="地板好髒">🧹 地板好髒</button>
+        <button class="quick" data-prompt="檢查家電">🔌 檢查家電</button>
+        <button class="quick" data-prompt="今天用電如何">⚡ 今天用電如何</button>
+      </div>
+      <form class="chat-form" id="chatForm"><input id="chatInput" type="text" placeholder="輸入訊息，例如：幫我打掃地板…" autocomplete="off" aria-label="輸入給 AI 管家的訊息"><button class="btn" type="submit">送出</button></form>
+    </article>
+  </section>
+
+  <div class="section-head"><div><h2>提醒事項與操作紀錄</h2><p>展示系統如何呈現提醒與操作結果。</p></div></div>
+  <section class="grid main-grid">
+    <article class="card">
+      <div class="card-title"><div><h3>🔔 居家提醒</h3><p>依模擬資料產生的提醒</p></div><span class="tag orange" id="reminderCount">2 項提醒</span></div>
+      <div class="alert-list" id="alertList">
+        <div class="alert red"><span class="alert-icon">⚠️</span><div><strong>清潔前請留意電線</strong><p>整理地面電線，降低掃地機器人卡住的可能。</p></div></div>
+        <div class="alert"><span class="alert-icon">🌡️</span><div><strong>室內溫度偏高</strong><p>目前模擬室溫高於目標舒適溫度，可考慮調整空調。</p></div></div>
+      </div>
+    </article>
+    <article class="card">
+      <div class="card-title"><div><h3>📝 最近操作紀錄</h3><p>此紀錄只保留在目前頁面中</p></div><button class="btn ghost small" id="clearLogBtn">清除紀錄</button></div>
+      <div class="log-list" id="logList">
+        <div class="log-item"><span class="log-time">現在</span><span class="log-bullet"></span><div class="log-text">系統啟動<span><small>展示模式已載入，設備資料為模擬值</small></span></div></div>
+      </div>
+    </article>
+  </section>
+  <footer class="footer"><span>© 呆萌居家 AI 管家 · 概念作品互動展示</span><span>注意：此網頁不連接實體家電，不會傳送真實控制指令。</span></footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal"><h3 id="modalTitle">確認操作</h3><p id="modalText">你確定要執行這項操作嗎？</p><div class="modal-actions"><button class="btn ghost" id="modalCancel">取消</button><button class="btn" id="modalConfirm">確認</button></div></div>
+</div>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const state = {temp:30,target:26,ac:false,light:true,cleaning:false,paused:false,progress:0,battery:86,energy:4.8,alerts:2};
+  let toastTimer, cleanTimer, pendingAction=null;
+  const nowText=()=>new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',hour12:false});
+  function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2700)}
+  function log(msg,detail=''){const item=document.createElement('div');item.className='log-item';const t=document.createElement('span');t.className='log-time';t.textContent=nowText();const b=document.createElement('span');b.className='log-bullet';const text=document.createElement('div');text.className='log-text';text.textContent=msg;if(detail){const small=document.createElement('small');small.textContent=detail;text.appendChild(small)}item.append(t,b,text);$('logList').prepend(item);while($('logList').children.length>8)$('logList').lastElementChild.remove();$('updatedAt').textContent=nowText()}
+  function addBubble(text,type='bot'){const b=document.createElement('div');b.className='bubble '+type;b.append(document.createTextNode(text));const small=document.createElement('small');small.textContent=(type==='bot'?'小管家':'你')+' · '+nowText();b.appendChild(small);$('chatLog').appendChild(b);$('chatLog').scrollTop=$('chatLog').scrollHeight}
+  function syncAC(from='control'){state.ac=$('acToggle').checked;$('acDeviceToggle').checked=state.ac;$('acStateText').textContent=state.ac?'目前已開啟（模擬）':'目前已關閉';$('acTag').textContent=state.ac?'冷氣運作中':'冷氣可控制';$('acDeviceDetail').textContent=state.ac?'運作中 · 目標 '+state.target+'°C':'已關閉 · 目標 '+state.target+'°C';$('acTag').className='tag '+(state.ac?'green':'');updateMetrics();if(from==='control'){log('冷氣狀態已更新',state.ac?'模擬開啟':'模擬關閉');toast(state.ac?'冷氣已在展示模式中開啟！':'冷氣已在展示模式中關閉。')}}
+  function updateTemp(){state.temp=+$('tempRange').value;state.target=+$('targetRange').value;$('metricTemp').textContent=state.temp;$('tempBig').textContent=state.temp;$('rangeTemp').textContent=state.temp;$('targetTemp').textContent=state.target;let hot=state.temp-state.target;$('tempDescription').textContent=state.temp>=30?'嗯……有點像夏天的烤箱！':state.temp>state.target?'好像有點悶熱呢。':'溫度看起來滿舒服的！';$('tempFoot').textContent=hot>2?'目前稍微偏熱':hot>=0?'接近舒適設定':'低於目標溫度';$('tempAdvice').textContent=hot>0?'室溫高於目標值，建議開啟冷氣或改善通風。此頁不會真的控制家電。':'目前室溫已達到或低於目標值，可依個人舒適度決定是否需要冷氣。';updateMetrics()}
+  function updateMetrics(){let n=(state.ac?1:0)+(state.light?1:0)+(state.cleaning?1:0);$('metricDevices').textContent=n;$('deviceCountTag').textContent=n+' 台運作中';$('metricEnergy').textContent=state.energy.toFixed(1);$('energyTotal').textContent=state.energy.toFixed(1);let alerts=0;if(state.temp>state.target+2)alerts++;if(true)alerts++;$('metricAlerts').textContent=alerts;$('alertFoot').textContent=alerts?'有 '+alerts+' 項需要留意':'目前沒有待處理提醒';$('reminderCount').textContent=alerts+' 項提醒';}
+  function updateLight(){state.light=$('lightToggle').checked;$('lightDetail').textContent=state.light?'已開啟 · 模擬設備':'已關閉 · 模擬設備';updateMetrics();log('客廳智慧燈狀態已更新',state.light?'模擬開啟':'模擬關閉');toast(state.light?'智慧燈已開啟（模擬）':'智慧燈已關閉（模擬）')}
+  function setRobotMood(status,mood,msg){$('robotStatus').textContent=status;$('robotMood').textContent=mood;$('robotMessage').textContent=msg}
+  function updateCleanUI(){$('cleanPercent').textContent=state.progress+'%';$('cleanProgress').style.width=state.progress+'%';$('batteryText').textContent=state.battery+'%';$('batteryBar').style.width=state.battery+'%';$('cleanTag').textContent=state.progress>=100?'已完成':state.cleaning?(state.paused?'已暫停':'清潔中'):'尚未開始';$('vacuumDetail').textContent=state.progress>=100?'清潔完成 · 電量 '+state.battery+'%':state.cleaning?(state.paused?'已暫停 · 電量 ':'清潔中 · 電量 ')+state.battery+'%':'待命中 · 電量 '+state.battery+'%';$('vacuumToggle').textContent=state.cleaning?(state.paused?'繼續':'暫停'):(state.progress>=100?'再清一次':'啟動');$('cleanAction').textContent=state.cleaning?(state.paused?'▶ 繼續清潔':'Ⅱ 暫停清潔'):(state.progress>=100?'↻ 再次清潔':'▶ 開始清潔');$('cleanEmoji').textContent=state.progress>=100?'✨':state.cleaning?(state.paused?'⏸️':'🧹'):'🧹';$('cleanTime').textContent=state.progress>=100?'已完成':state.cleaning?'剩餘約 '+Math.max(1,Math.ceil((100-state.progress)/9))+' 分鐘':'約 12 分鐘';$('robotPin').style.left=(25+state.progress*.42)+'%';$('robotPin').style.top=(62-state.progress*.35)+'%';$('cleanPath').style.opacity=state.cleaning&&!state.paused?'1':($('pathToggle').checked?'0.6':'0');$('cleanNote').textContent=state.progress>=100?'任務完成！地板看起來清爽多了，我也要休息一下下～':state.cleaning?'清潔進行中！我會注意路線示意裡的障礙物。':'開始前先看看地上有沒有小玩具或電線吧！我不想跟它們玩摔角。';updateMetrics()}
+  function stopTimer(){if(cleanTimer){clearInterval(cleanTimer);cleanTimer=null}}
+  function startClean(){if(state.progress>=100){state.progress=0;state.battery=Math.max(40,state.battery)}state.cleaning=true;state.paused=false;setRobotMood('● 清潔任務中','小萌正在努力！','我會沿著示意路線清潔，遇到障礙就要小心囉。');updateCleanUI();log('掃地機器人開始清潔（模擬）','示範進度開始更新');toast('清潔示範開始！');stopTimer();cleanTimer=setInterval(()=>{if(!state.cleaning||state.paused)return;state.progress=Math.min(100,state.progress+9);state.battery=Math.max(0,state.battery-1);updateCleanUI();if(state.progress>=100){stopTimer();state.cleaning=false;state.paused=false;updateCleanUI();setRobotMood('● 任務完成','清潔大成功！','地板清潔示範完成。真實環境仍需確認障礙物與設備狀態。');log('清潔任務完成（模擬）','展示進度已達 100%');toast('清潔完成！小管家領取一顆虛擬星星 ⭐')}} ,900)}
+  function pauseClean(){if(!state.cleaning){toast('目前沒有正在執行的清潔任務。');return}state.paused=!state.paused;updateCleanUI();setRobotMood(state.paused?'● 已暫停':'● 清潔任務中',state.paused?'小萌先喘口氣～':'小萌重新出發！',state.paused?'我先停在這裡，等你說繼續。':'好！繼續沿著示意路線前進。');log(state.paused?'清潔任務已暫停':'清潔任務已繼續','模擬操作');toast(state.paused?'清潔已暫停':'清潔已繼續')}
+  function checkHome(){const msg='居家狀態檢查完成：室溫 '+state.temp+'°C；冷氣'+(state.ac?'開啟':'關閉')+'；智慧燈'+(state.light?'開啟':'關閉')+'；掃地機器人'+(state.cleaning?'正在清潔':'待命或已完成')+'。地圖中有一處電線注意區，建議清潔前先整理。以上為模擬資料。';addBubble(msg);log('已檢查居家狀態（模擬）','顯示室溫、家電及障礙物提示');toast('居家狀態檢查完成');setRobotMood('● 檢查完成','報告來囉！','我找到一個小提醒：清潔前記得整理電線。')}
+  function suggestTemp(){if(state.temp>state.target){if(!state.ac){$('acToggle').checked=true;syncAC('auto')}setRobotMood('● 溫度建議已更新','涼快一點吧！','我已在展示模式中模擬開啟冷氣。');addBubble('室溫 '+state.temp+'°C，高於目標 '+state.target+'°C。我建議開啟冷氣；展示模式已模擬開啟，沒有控制實體設備。');log('AI 提出控溫建議','模擬室溫 '+state.temp+'°C、目標 '+state.target+'°C');toast('已套用控溫示範！')}else{addBubble('目前室溫 '+state.temp+'°C，已達到或低於目標 '+state.target+'°C。可以先不開冷氣，記得依實際舒適度調整喔。');toast('目前不一定需要開冷氣。')}}
+  function simulateEnergy(){state.energy=+(3.5+Math.random()*3.7).toFixed(1);$('metricEnergy').textContent=state.energy.toFixed(1);$('energyTotal').textContent=state.energy.toFixed(1);const compare=state.energy>5.8?'高於示範平均':state.energy<4.2?'低於示範平均':'接近平均';$('energyCompare').textContent=compare;$('energyCompare').style.color=state.energy>5.8?'var(--peach-ink)':'var(--mint-ink)';$('energyAdvice').textContent=state.energy>5.8?'本次模擬用電較高。真實系統應先確認量測期間、設備狀態及歷史資料，不能直接判定故障。':'本次模擬用電 '+compare+'。真實分析需要可靠的電表或能源資料。';const bars=$('energyChart').querySelectorAll('.bar');bars.forEach(b=>b.style.height=(18+Math.random()*75)+'%');updateMetrics();log('重新產生用電示範資料','模擬累積用電 '+state.energy.toFixed(1)+' kWh');toast('已更新模擬用電資料')}
+  function respond(text){const q=text.toLowerCase();if(/熱|冷氣|溫度/.test(q)){if(state.temp>state.target){if(!state.ac){$('acToggle').checked=true;syncAC('auto')}return '收到！目前模擬室溫 '+state.temp+'°C，目標是 '+state.target+'°C。我建議開啟冷氣，並已在展示頁模擬開啟。真實設備需要相容連線與授權喔！🥵'}return '目前模擬室溫 '+state.temp+'°C，已接近或低於目標 '+state.target+'°C。可以先觀察一下，不一定需要開冷氣～'}if(/髒|清潔|打掃|掃地/.test(q)){if(!state.cleaning||state.paused)startClean();return '清潔任務已在展示模式中啟動！我會留意示意地圖裡的電線注意區。真實清潔前，請先確認地板安全。🧹'}if(/家電|忘記|狀態|檢查/.test(q)){checkHome();return '我檢查好囉！目前冷氣'+(state.ac?'開啟':'關閉')+'、智慧燈'+(state.light?'開啟':'關閉')+'。地面有一處電線注意區。這些都是網頁模擬狀態喔。'}if(/用電|電費|耗電/.test(q)){return '今日模擬用電是 '+state.energy.toFixed(1)+' kWh，屬於示範數據，不是實際電表讀值。若要判斷電費或異常，需要真實用電紀錄和計費資訊。⚡'}if(/你好|嗨|哈囉/.test(q)){return '哈囉！我在這裡！🤖 今天要調整溫度、打掃地板，還是一起檢查家裡呢？'}if(/關燈/.test(q)){$('lightToggle').checked=false;updateLight();return '好，我已在展示模式中模擬關閉客廳智慧燈。真實控制需要設備支援與授權。'}if(/開燈/.test(q)){$('lightToggle').checked=true;updateLight();return '燈光已在展示模式中模擬開啟！亮晶晶～💡'}if(/停止|暫停/.test(q)){pauseClean();return '我已處理清潔任務的暫停狀態（模擬）。如果是真實設備，請確認機器人已確實停止。'}return '我有收到你的需求！目前這是互動原型，我能處理溫度、清潔、家電狀態和用電等示範指令。若不確定，我會先問你，不會假裝已控制真實設備。🙂'}
+  function submitChat(text){text=text.trim();if(!text)return;addBubble(text,'user');$('chatInput').value='';const reply=respond(text);setTimeout(()=>addBubble(reply,'bot'),120);log('收到使用者指令',text)}
+  function showConfirm(title,msg,action){pendingAction=action;$('modalTitle').textContent=title;$('modalText').textContent=msg;$('confirmModal').classList.add('show')}
+  function reset(){stopTimer();Object.assign(state,{temp:30,target:26,ac:false,light:true,cleaning:false,paused:false,progress:0,battery:86,energy:4.8,alerts:2});$('tempRange').value=30;$('targetRange').value=26;$('acToggle').checked=false;$('acDeviceToggle').checked=false;$('lightToggle').checked=true;$('pathToggle').checked=true;$('cleanPath').style.opacity='.6';updateTemp();syncAC('silent');updateLightSilent();updateCleanUI();simulateEnergyInitial();$('chatLog').innerHTML='<div class="bubble bot">哈囉！我是呆萌居家 AI 管家 🤖<br>目前是展示模式，我可以幫你模擬控制和查看狀態喔！<small>小管家 · 現在</small></div>';$('logList').innerHTML='';log('系統已重設','展示模式已回到初始狀態');setRobotMood('● 已準備好','管家小萌在線！','今天要先整理家裡，還是先涼快一下？');toast('已重設為初始展示狀態')}
+  function updateLightSilent(){state.light=$('lightToggle').checked;$('lightDetail').textContent=state.light?'已開啟 · 模擬設備':'已關閉 · 模擬設備'}
+  function simulateEnergyInitial(){state.energy=4.8;$('energyTotal').textContent='4.8';$('metricEnergy').textContent='4.8';$('energyCompare').textContent='接近平均';$('energyAdvice').textContent='目前示範資料接近平常範圍。若要分析真實用電，需連接智慧電表或可靠的能源資料來源。';}
+  $('tempRange').addEventListener('input',()=>{updateTemp()});$('targetRange').addEventListener('input',()=>{updateTemp();$('acDeviceDetail').textContent=(state.ac?'運作中':'已關閉')+' · 目標 '+state.target+'°C'});
+  $('acToggle').addEventListener('change',()=>syncAC());$('acDeviceToggle').addEventListener('change',()=>{$('acToggle').checked=$('acDeviceToggle').checked;syncAC()});$('lightToggle').addEventListener('change',updateLight);
+  $('autoTempBtn').addEventListener('click',suggestTemp);$('startCleanBtn').addEventListener('click',startClean);$('cleanAction').addEventListener('click',()=>state.cleaning?pauseClean():startClean());$('vacuumToggle').addEventListener('click',()=>state.cleaning?pauseClean():startClean());$('pauseCleanBtn').addEventListener('click',pauseClean);
+  $('pathToggle').addEventListener('change',()=>{$('cleanPath').style.opacity=$('pathToggle').checked?(state.cleaning&&!state.paused?'1':'.6'):'0';toast($('pathToggle').checked?'已顯示清潔路線示意':'已隱藏清潔路線示意')});
+  $('checkHomeBtn').addEventListener('click',checkHome);$('simulateEnergyBtn').addEventListener('click',simulateEnergy);
+  $('chatForm').addEventListener('submit',e=>{e.preventDefault();submitChat($('chatInput').value)});document.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>submitChat(b.dataset.prompt)));
+  $('clearLogBtn').addEventListener('click',()=>{$('logList').innerHTML='';toast('操作紀錄已清除')});
+  $('resetBtn').addEventListener('click',()=>showConfirm('重設展示頁？','這會將溫度、設備狀態、清潔進度與對話紀錄恢復為初始示範值。',reset));
+  $('modalCancel').addEventListener('click',()=>{$('confirmModal').classList.remove('show');pendingAction=null});$('modalConfirm').addEventListener('click',()=>{const fn=pendingAction;$('confirmModal').classList.remove('show');pendingAction=null;if(fn)fn()});$('confirmModal').addEventListener('click',e=>{if(e.target===$('confirmModal'))$('modalCancel').click()});
+  updateTemp();syncAC('silent');updateLightSilent();updateCleanUI();updateMetrics();
+})();
+</script>
+</body>
+</html>
